@@ -138,6 +138,18 @@ def get_contrincantes(champion_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Campeón no encontrado")
     return crud.get_cvc_by_champion(db, champion_id)
 
+
+@app.put("/campeones/{champion_id}/activar", response_model=schemas.Champion)
+def activate_champion(champion_id: int, db: Session = Depends(get_db)):
+    champ = crud.get_champion(db, champion_id)
+    if not champ:
+        raise HTTPException(status_code=404, detail="Campeón no encontrado")
+    champ.activo = True
+    db.add(champ)
+    db.commit()
+    db.refresh(champ)
+    return champ
+
 # --- Reportes ---
 @app.get("/reportes/campeones")
 def reporte_campeones(format: str = "csv", db: Session = Depends(get_db)):

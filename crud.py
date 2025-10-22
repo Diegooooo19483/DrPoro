@@ -109,6 +109,8 @@ def add_item_to_champion(db: Session, champion_id: int, item_id: int, porcentaje
     db.refresh(assoc)
     return assoc
 
+
+#  -------------- NO ENTENDI XD
 def get_items_for_champion(db: Session, champion_id: int):
     return db.query(models.Item).join(models.ChampionItem, models.Item.id==models.ChampionItem.item_id).filter(models.ChampionItem.champion_id==champion_id).all()
 
