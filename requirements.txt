@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+SQLAlchemy
+pydantic
+databases
+alembic
+pandas
+openpyxl
+XlsxWriter
+reportlab
+python-multipart
