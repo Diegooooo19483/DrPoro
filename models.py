@@ -3,7 +3,6 @@ from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Tabl
 from sqlalchemy.orm import relationship
 from database import Base
 
-# Association table for many-to-many between Champion and Item
 class ChampionItem(Base):
     __tablename__ = "champion_items"
     id = Column(Integer, primary_key=True, index=True)
@@ -11,7 +10,6 @@ class ChampionItem(Base):
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
     porcentaje_uso = Column(Float, default=0.0)
 
-    # relationships defined on parent models
 
 class Champion(Base):
     __tablename__ = "champions"
@@ -23,10 +21,8 @@ class Champion(Base):
     tasa_baneo = Column(Float, default=0.0)
     activo = Column(Boolean, default=True)
 
-    # 1:1 Profile
     profile = relationship("Profile", back_populates="champion", uselist=False, cascade="all, delete-orphan")
 
-    # 1:N champion vs champion (as owner)
     enfrentamientos = relationship(
         "ChampionVsChampion",
         back_populates="champion",
@@ -34,7 +30,6 @@ class Champion(Base):
         foreign_keys="ChampionVsChampion.champion_id"
     )
 
-    # N:M via association object
     items = relationship("Item", secondary="champion_items", back_populates="champions")
 
 class Profile(Base):

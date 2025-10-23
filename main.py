@@ -44,6 +44,14 @@ def get_champion(champion_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Campeón no encontrado")
     return db_champ
 
+@app.get("/campeones/nombre/{nombre}", response_model=schemas.Champion)
+def get_champion_by_name(nombre: str, db: Session = Depends(get_db)):
+    db_champ = crud.get_champion_by_name(db, nombre)
+    if not db_champ:
+        raise HTTPException(status_code=404, detail="Campeón no encontrado")
+    return db_champ
+
+
 @app.put("/campeones/{champion_id}", response_model=schemas.Champion)
 def put_champion(champion_id: int, champ_update: schemas.ChampionCreate, db: Session = Depends(get_db)):
     db_champ = crud.get_champion(db, champion_id)
