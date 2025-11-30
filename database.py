@@ -1,9 +1,14 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+# database.py
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-# Clever Cloud te da la URL completa en la variable de entorno
-DATABASE_URL = os.getenv("postgresql://ubtfbwjh42jad5ld8zuk:uWkxWmhwyHPgw5xRgdktHNbflQJGAT@bckvhebytlohu0owjmv9-postgresql.services.clever-cloud.com:50013/bckvhebytlohu0owjmv9")
+# Debe leer: una variable llamada DATABASE_URL (la que tú crearás en Clever Cloud)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL no está definida. Configúrala en Clever Cloud.")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
