@@ -9,3 +9,5 @@ openpyxl
 XlsxWriter
 reportlab
 python-multipart
+jinja2
+psycopg2-binary
