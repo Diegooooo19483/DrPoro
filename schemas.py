@@ -1,5 +1,5 @@
 # schemas.py
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List
 
 class ProfileBase(BaseModel):
@@ -38,6 +38,7 @@ class ChampionBase(BaseModel):
 
 class ChampionCreate(ChampionBase):
     profile: Optional[ProfileCreate] = None
+    items: List[int] = Field(default_factory=list)
 
 class ChampionUpdate(BaseModel):
     nombre: Optional[str]
@@ -46,6 +47,9 @@ class ChampionUpdate(BaseModel):
     tasa_seleccion: Optional[float]
     tasa_baneo: Optional[float]
     activo: Optional[bool]
+    items: List[int] = Field(default_factory=list)
+    profile: Optional[ProfileCreate] = None
+
 
 class Champion(ChampionBase):
     id: int
