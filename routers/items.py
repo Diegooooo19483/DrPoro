@@ -1,24 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy.orm import Session
 from database import get_db
 import models, schemas
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
 
+# -------------------------------------------------------------
+# CREAR ITEM
+# -------------------------------------------------------------
 @router.post("/", response_model=schemas.Item)
-async def create_item(item: schemas.ItemCreate, db: AsyncSession = Depends(get_db)):
+def create_item(item: schemas.ItemCreate, db: Session = Depends(get_db)):
+
     # Verificar si ya existe
-    result = await db.execute(
-        select(models.Item).where(models.Item.nombre == item.nombre)
-    )
-    exists = result.scalar_one_or_none()
+    exists = db.query(models.Item).filter(
+        models.Item.nombre == item.nombre
+    ).first()
 
     if exists:
         raise HTTPException(400, "El ítem ya existe")
 
-    # Crear instancia
     new_item = models.Item(
         nombre=item.nombre,
         tipo=item.tipo,
@@ -27,24 +28,30 @@ async def create_item(item: schemas.ItemCreate, db: AsyncSession = Depends(get_d
     )
 
     db.add(new_item)
-    await db.commit()
-    await db.refresh(new_item)
+    db.commit()
+    db.refresh(new_item)
 
     return new_item
 
 
+# -------------------------------------------------------------
+# LISTAR ITEMS
+# -------------------------------------------------------------
 @router.get("/", response_model=list[schemas.Item])
-async def get_items(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(models.Item))
-    return result.scalars().all()
+def get_items(db: Session = Depends(get_db)):
+
+    return db.query(models.Item).all()
 
 
+# -------------------------------------------------------------
+# OBTENER ITEM POR ID
+# -------------------------------------------------------------
 @router.get("/{item_id}", response_model=schemas.Item)
-async def get_item(item_id: int, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(
-        select(models.Item).where(models.Item.id == item_id)
-    )
-    item = result.scalar_one_or_none()
+def get_item(item_id: int, db: Session = Depends(get_db)):
+
+    item = db.query(models.Item).filter(
+        models.Item.id == item_id
+    ).first()
 
     if not item:
         raise HTTPException(404, "No encontrado")
