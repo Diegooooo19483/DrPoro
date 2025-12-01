@@ -11,10 +11,18 @@ app = FastAPI(title="Dr. Poro - API de Estadísticas de LoL")
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+started = False
+
 @app.on_event("startup")
 async def startup():
+    global started
+    if started:
+        return
+    started = True
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
 
 # Routers
 app.include_router(champions.router)
