@@ -1,10 +1,703 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dr Poro API - League of Legends</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0dcaf0;
+            --secondary-color: #6c757d;
+            --dark-bg: #121212;
+            --darker-bg: #0a0a0a;
+            --card-bg: #1e1e1e;
+            --text-light: #f8f9fa;
+            --text-gray: #adb5bd;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Navbar personalizado */
+        .navbar-custom {
+            background-color: rgba(10, 10, 10, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(13, 202, 240, 0.2);
+            padding: 0.8rem 0;
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .navbar-brand i {
+            margin-right: 8px;
+        }
+
+        .nav-link {
+            color: var(--text-gray) !important;
+            font-weight: 500;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding: 8px 15px !important;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            background-color: rgba(13, 202, 240, 0.1);
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            background-color: rgba(13, 202, 240, 0.15);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)),
+                        url('https://images.contentstack.io/v3/assets/blt187521ff0727be24/blt0bccd12b8d0c7e5b/60ee0f5676c1b5105c2c7f30/00_HEADER_MYSTERY.jpg') no-repeat center center;
+            background-size: cover;
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.9) 70%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #0dcaf0, #20c997, #0dcaf0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-gray);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Barra de búsqueda */
+        .search-container {
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+
+        .search-input {
+            background-color: rgba(30, 30, 30, 0.9);
+            border: 2px solid rgba(13, 202, 240, 0.3);
+            border-radius: 50px;
+            color: var(--text-light);
+            padding: 1.2rem 1.5rem 1.2rem 3rem;
+            font-size: 1.1rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-input:focus {
+            background-color: rgba(40, 40, 40, 0.95);
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 25px rgba(13, 202, 240, 0.3);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(90deg, #0dcaf0, #20c997);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            padding: 0.8rem 1.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(13, 202, 240, 0.4);
+        }
+
+        /* Cards de características */
+        .features-section {
+            padding: 5rem 0;
+            background-color: var(--darker-bg);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(13, 202, 240, 0.15);
+            border-color: rgba(13, 202, 240, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .feature-text {
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--darker-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-link {
+            color: var(--text-gray);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.8rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+
+        .copyright {
+            color: var(--text-gray);
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-api {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-api:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-bg);
+        }
+
+        .btn-docs {
+            background-color: transparent;
+            border: 2px solid #6c757d;
+            color: #6c757d;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-docs:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .search-input {
+                padding: 1rem 1.2rem 1rem 2.8rem;
+                font-size: 1rem;
+            }
+
+            .search-btn {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Efectos de partículas (opcional) */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: rgba(13, 202, 240, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-ghost"></i> Dr Poro API
+            </a>
 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/docs">
+                            <i class="fas fa-book"></i> API Docs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">
+                            <i class="fas fa-star"></i> Características
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-database"></i> Campeones
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-cube"></i> Items
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-chart-bar"></i> Reportes
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section con barra de búsqueda -->
+    <section class="hero-section">
+        <!-- Efecto de partículas -->
+        <div class="particles" id="particles"></div>
+
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Dr Poro API</h1>
+                <p class="hero-subtitle">
+                    La API definitiva para datos de League of Legends. Accede a información completa
+                    de campeones, items, builds y estadísticas en tiempo real. Potencia tus aplicaciones
+                    con datos actualizados de la grieta del invocador.
+                </p>
+
+                <!-- Barra de búsqueda -->
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput"
+                           placeholder="Busca campeones, items, habilidades..."
+                           autocomplete="off">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search me-2"></i> Buscar
+                    </button>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="action-buttons">
+                    <a href="/docs" class="btn-api">
+                        <i class="fas fa-code me-2"></i> Ver Documentación API
+                    </a>
+                    <a href="/health" class="btn-docs">
+                        <i class="fas fa-heartbeat me-2"></i> Ver Estado del Servicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de características -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Características Principales</h2>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-ninja"></i>
+                        </div>
+                        <h4 class="feature-title">+160 Campeones</h4>
+                        <p class="feature-text">
+                            Datos completos de todos los campeones de League of Legends: estadísticas,
+                            habilidades, skins, roles y recomendaciones de builds.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cube"></i>
+                        </div>
+                        <h4 class="feature-title">+400 Items</h4>
+                        <p class="feature-text">
+                            Información detallada de todos los items del juego: precios, estadísticas,
+                            composición y sinergias con campeones específicos.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="feature-title">Análisis Avanzado</h4>
+                        <p class="feature-text">
+                            Reportes detallados, estadísticas de uso, win rates y recomendaciones
+                            basadas en datos reales de partidas.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="feature-title">API Rápida</h4>
+                        <p class="feature-text">
+                            Respuestas en milisegundos con tecnología asíncrona. Diseñada para
+                            alto rendimiento y escalabilidad automática.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="feature-title">Seguridad</h4>
+                        <p class="feature-text">
+                            Autenticación JWT, rate limiting, CORS configurado y encriptación
+                            de extremo a extremo para tus datos.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <h4 class="feature-title">Cloud Ready</h4>
+                        <p class="feature-text">
+                            Desplegada en Render con base de datos PostgreSQL. Disponibilidad 24/7
+                            y backups automáticos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">
+                        <i class="fas fa-ghost me-2"></i> Dr Poro API
+                    </h5>
+                    <p style="color: var(--text-gray);">
+                        API REST para desarrolladores de League of Legends.
+                        Datos actualizados, documentación completa y soporte activo.
+                    </p>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">Endpoints Principales</h5>
+                    <a href="/api/champions" class="footer-link">/api/champions</a>
+                    <a href="/api/items" class="footer-link">/api/items</a>
+                    <a href="/api/associations" class="footer-link">/api/associations</a>
+                    <a href="/api/reports" class="footer-link">/api/reports</a>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">Enlaces Útiles</h5>
+                    <a href="/docs" class="footer-link">
+                        <i class="fas fa-external-link-alt me-2"></i> Documentación Swagger
+                    </a>
+                    <a href="/health" class="footer-link">
+                        <i class="fas fa-heartbeat me-2"></i> Estado del Servicio
+                    </a>
+                    <a href="https://render.com" target="_blank" class="footer-link">
+                        <i class="fas fa-server me-2"></i> Hosteado en Render
+                    </a>
+                    <a href="https://developer.riotgames.com/" target="_blank" class="footer-link">
+                        <i class="fas fa-gamepad me-2"></i> Riot Games API
+                    </a>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>© 2024 Dr Poro API. League of Legends es una marca registrada de Riot Games, Inc.
+                   Esta API no está afiliada con Riot Games.</p>
+                <p class="mt-2">
+                    <span id="apiStatus" class="badge bg-success">
+                        <i class="fas fa-check-circle me-1"></i> API Online
+                    </span>
+                    <span class="ms-3" id="currentTime"></span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Efecto de partículas
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // Tamaño aleatorio
+                const size = Math.random() * 10 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+
+                // Posición aleatoria
+                particle.style.left = `${Math.random() * 100}%`;
+
+                // Animación aleatoria
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+
+                container.appendChild(particle);
+            }
+        }
+
+        // Barra de búsqueda
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                alert(`Buscando: "${query}"\n\nEsta funcionalidad se implementará próximamente.`);
+                // Aquí puedes redirigir a la búsqueda real
+                // window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            } else {
+                document.getElementById('searchInput').focus();
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+
+        // Verificar estado de la API
+        async function checkApiStatus() {
+            try {
+                const response = await fetch('/health');
+                if (response.ok) {
+                    document.getElementById('apiStatus').innerHTML =
+                        '<i class="fas fa-check-circle me-1"></i> API Online';
+                    document.getElementById('apiStatus').className = 'badge bg-success';
+                } else {
+                    throw new Error('API offline');
+                }
+            } catch (error) {
+                document.getElementById('apiStatus').innerHTML =
+                    '<i class="fas fa-times-circle me-1"></i> API Offline';
+                document.getElementById('apiStatus').className = 'badge bg-danger';
+            }
+        }
+
+        // Hora actual
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateStr = now.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentTime').innerHTML =
+                `<i class="far fa-clock me-1"></i> ${dateStr} - ${timeStr}`;
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            checkApiStatus();
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Efecto de escritura en la barra de búsqueda
+            const searchInput = document.getElementById('searchInput');
+            const placeholders = [
+                "Busca campeones, items, habilidades...",
+                "Ej: Yasuo, Infinity Edge, Flash...",
+                "Ej: Ahri, Deathcap, Matchups...",
+                "Ej: Darius, Goredrinker, Counters..."
+            ];
+            let currentPlaceholder = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            let typingSpeed = 50;
+
+            function typePlaceholder() {
+                const currentText = placeholders[currentPlaceholder];
+
+                if (isDeleting) {
+                    searchInput.placeholder = currentText.substring(0, charIndex - 1);
+                    charIndex--;
+                    typingSpeed = 30;
+                } else {
+                    searchInput.placeholder = currentText.substring(0, charIndex + 1);
+                    charIndex++;
+                    typingSpeed = 50;
+                }
+
+                if (!isDeleting && charIndex === currentText.length) {
+                    isDeleting = true;
+                    typingSpeed = 1000; // Pausa al completar
+                } else if (isDeleting && charIndex === 0) {
+                    isDeleting = false;
+                    currentPlaceholder = (currentPlaceholder + 1) % placeholders.length;
+                    typingSpeed = 500; // Pausa antes de empezar nuevo
+                }
+
+                setTimeout(typePlaceholder, typingSpeed);
+            }
+
+            // Iniciar efecto de escritura después de un momento
+            setTimeout(typePlaceholder, 1000);
+        });
+    </script>
 </body>
 </html>

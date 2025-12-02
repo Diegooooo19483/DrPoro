@@ -47,3 +47,11 @@ app.include_router(items.router, prefix="/api/items", tags=["Items"])
 app.include_router(associations.router, prefix="/api/associations", tags=["Associations"])
 app.include_router(cvc.router, prefix="/api/cvc", tags=["CVC"])
 app.include_router(reports.router, prefix="/api/reports", tags=["Reports"])
+
+
+@app.get("/", include_in_schema=False)
+async def read_root(request: Request):
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
