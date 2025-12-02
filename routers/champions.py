@@ -1,14 +1,54 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
-
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from database import get_db
 import models, schemas
 
+
 router = APIRouter(prefix="/champions", tags=["Champions"])
+templates = Jinja2Templates(directory="templates")
+
+@router.get("/create", response_class=HTMLResponse)
+async def create_champion_form(request: Request):
+    return templates.TemplateResponse("create_champion.html", {"request": request})
 
 
+@router.post("/create", response_class=HTMLResponse)
+async def create_champion_form_post(
+    request: Request,
+    nombre: str = Form(...),
+    rol: str = Form(...),
+    tasa_victoria: float = Form(...),
+    tasa_seleccion: float = Form(...),
+    tasa_baneo: float = Form(...),
+    descripcion: str = Form(""),
+    historia: str = Form(""),
+    items: str = Form("")
+):
+    # Convertir items: "1,2,3" → [1,2,3]
+    item_ids = [int(x.strip()) for x in items.split(",")] if items else []
+
+    payload = {
+        "nombre": nombre,
+        "rol": rol,
+        "tasa_victoria": tasa_victoria,
+        "tasa_seleccion": tasa_seleccion,
+        "tasa_baneo": tasa_baneo,
+        "profile": {
+            "descripcion": descripcion,
+            "historia": historia
+        },
+        "items": item_ids
+    }
+
+    # Reusar tu endpoint API
+    from fastapi.encoders import jsonable_encoder
+    champion_data = schemas.ChampionCreate(**jsonable_encoder(payload))
+
+    return await create_champion(champion_data)
 # ----------------------------------------------------------
 # CREAR
 # ----------------------------------------------------------
