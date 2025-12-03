@@ -1,0 +1,176 @@
+/* -------------------------
+   VARIABLES GLOBALES
+------------------------- */
+:root {
+    --primary: #1e90ff;        /* Azul profesional */
+    --secondary: #ff6f61;      /* Color de acento */
+    --bg-dark: #121212;         /* Fondo oscuro */
+    --bg-card: #1f1f1f;        /* Fondo de contenedores */
+    --text-light: #e0e0e0;     /* Texto principal */
+    --text-muted: #a0a0a0;     /* Texto secundario */
+    --border-radius: 12px;
+    --shadow: rgba(0, 0, 0, 0.5);
+}
+
+/* -------------------------
+   BODY
+------------------------- */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+}
+
+/* -------------------------
+   NAVBAR
+------------------------- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 40px;
+    background-color: var(--bg-card);
+    box-shadow: 0 4px 10px var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar .logo {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.navbar .links a {
+    color: var(--text-light);
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+    transition: color 0.3s, transform 0.2s;
+}
+
+.navbar .links a:hover {
+    color: var(--secondary);
+    transform: scale(1.05);
+}
+
+/* -------------------------
+   SEARCH BAR EN NAVBAR
+------------------------- */
+.navbar .search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar .search input {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background-color: #2a2a2a;
+    color: var(--text-light);
+}
+
+.navbar .search button {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary);
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.navbar .search button:hover {
+    background-color: var(--secondary);
+}
+
+/* -------------------------
+   CONTENEDORES / CARDS
+------------------------- */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: var(--bg-card);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 16px var(--shadow);
+}
+
+/* -------------------------
+   HEADINGS
+------------------------- */
+h1, h2, h3 {
+    color: var(--text-light);
+    margin-bottom: 16px;
+}
+
+/* -------------------------
+   TABLES
+------------------------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--bg-card);
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    padding: 12px 16px;
+    text-align: left;
+}
+
+table th {
+    background-color: #2c2c2c;
+    color: var(--primary);
+}
+
+table tr:nth-child(even) {
+    background-color: #1a1a1a;
+}
+
+/* -------------------------
+   BUTTONS
+------------------------- */
+button {
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button.primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+button.primary:hover {
+    background-color: var(--secondary);
+}
+
+button.danger {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+button.danger:hover {
+    background-color: #ff7875;
+}
+
+/* -------------------------
+   LINKS
+------------------------- */
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--secondary);
+}

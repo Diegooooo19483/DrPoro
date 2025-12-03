@@ -1,0 +1,67 @@
+.root-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+
+/* Imagen más grande y centrada */
+.root-logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.root-logo {
+    width: 250px;   /* Más grande que antes */
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 25px gold;
+}
+
+/* Barra de búsqueda solo para root */
+.root-search-form {
+    position: relative;
+    width: 60%;  /* ancho de la barra */
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.root-search-input {
+    width: 100%;
+    padding: 14px 45px 14px 20px; /* más grande que antes */
+    border-radius: 25px;
+    border: 1px solid #444;
+    font-size: 1.3rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.root-search-input:focus {
+    border: 1px solid gold;
+    box-shadow: 0 0 15px gold;
+}
+
+.root-search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    pointer-events: none;
+}
+
+/* Navbar centrada debajo */
+.root-navbar {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.root-navbar .btn {
+    padding: 12px 25px;
+    font-size: 1rem;
+    border-radius: 10px;
+}

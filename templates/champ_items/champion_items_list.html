@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Items del campeón: {{ champion.nombre }}</h2>
+
+<a href="/champion-items/{{ champion.id }}/add">➕ Agregar item</a>
+<br/><br/>
+
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Item</th>
+        <th>Porcentaje uso</th>
+    </tr>
+
+    {% for it in items %}
+    <tr>
+        <td>{{ it.nombre }}</td>
+        <td>{{ it.porcentaje_uso }}%</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<br/>
+<a href="/champions/{{ champion.id }}/view">⬅ Volver al campeón</a>
+{% endblock %}

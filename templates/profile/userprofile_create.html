@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Crear Perfil de Usuario</h1>
+    <form action="/userprofiles/new" method="post" enctype="multipart/form-data">
+        <label for="nombre_perfil">Nombre de Perfil:</label><br>
+        <input type="text" id="nombre_perfil" name="nombre_perfil" required><br><br>
+
+        <label for="nombre_cuenta">Nombre de Cuenta de Juego:</label><br>
+        <input type="text" id="nombre_cuenta" name="nombre_cuenta" required><br><br>
+
+        <label for="region">Región:</label><br>
+        <input type="text" id="region" name="region"><br><br>
+
+        <label for="foto">Foto de Perfil:</label><br>
+        <input type="file" id="foto" name="foto"><br><br>
+
+        <label for="campeones_favoritos_ids">Campeones Favoritos:</label><br>
+        <select id="campeones_favoritos_ids" name="campeones_favoritos_ids" multiple size="5">
+            {% for champ in all_champions %}
+                <option value="{{ champ.id }}">{{ champ.nombre }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <button type="submit" class="btn">Crear Perfil</button>
+    </form>
+</div>
+{% endblock %}

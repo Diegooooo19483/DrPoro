@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', path='champion_detail.css') }}">
+
+<h2>Detalles del Campeón: {{ champion.nombre }}</h2>
+
+<div class="champion-info">
+    <div class="champion-text">
+        <p><strong>ID:</strong> {{ champion.id }}</p>
+        <p><strong>Rol:</strong> {{ champion.rol }}</p>
+        <p><strong>Activo:</strong> {{ "Sí" if champion.activo else "No" }}</p>
+
+        <h3>Stats</h3>
+        <p><strong>Tasa Victoria:</strong> {{ champion.tasa_victoria }}%</p>
+        <p><strong>Tasa Selección:</strong> {{ champion.tasa_seleccion }}%</p>
+        <p><strong>Tasa Baneo:</strong> {{ champion.tasa_baneo }}%</p>
+
+        <h3>Perfil</h3>
+        {% if champion.profile %}
+            <p><strong>Descripción:</strong> {{ champion.profile.descripcion }}</p>
+            <p><strong>Historia:</strong> {{ champion.profile.historia }}</p>
+        {% else %}
+            <p>No hay perfil asignado.</p>
+        {% endif %}
+    </div>
+
+    {% if champion.profile and champion.profile.foto %}
+        <img src="/{{ champion.profile.foto }}" alt="Foto del campeón" class="champion-photo">
+    {% endif %}
+</div>
+
+<hr>
+
+<h3>Items del Campeón</h3>
+<ul>
+{% for ci, item in items_con_porcentaje %}
+    <li>{{ item.nombre }} ({{ item.tipo }}) - Uso: {{ ci.porcentaje_uso }}%</li>
+{% else %}
+    <li>No hay items agregados.</li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h3>Agregar Item</h3>
+<form method="post" action="/champion-items/{{ champion.id }}/add">
+    <label for="item_id">Item:</label>
+    <select name="item_id" required>
+        {% for item in all_items %}
+            <option value="{{ item.id }}">{{ item.nombre }} ({{ item.tipo }})</option>
+        {% endfor %}
+    </select>
+
+    <label for="porcentaje_uso">Porcentaje de uso:</label>
+    <input type="number" step="0.1" name="porcentaje_uso" value="0.0">
+
+    <button type="submit">Agregar Item</button>
+</form>
+
+<hr>
+
+<h3>Enfrentamientos del Campeón</h3>
+{% if champion.enfrentamientos %}
+    <table>
+        <thead>
+            <tr>
+                <th>Oponente</th>
+                <th>Winrate</th>
+                <th>Winrate Oponente</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cvc in champion.enfrentamientos %}
+            <tr>
+                <td>{{ cvc.oponente.nombre }}</td>
+                <td>{{ "%.1f"|format(cvc.winrate) }}%</td>
+                <td>{{ "%.1f"|format(100 - cvc.winrate) }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No hay enfrentamientos registrados para este campeón.</p>
+{% endif %}
+
+
+
+<a href="/champions/list"> Volver a la lista de campeones</a>
+{% endblock %}

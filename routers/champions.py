@@ -1,205 +1,251 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Form
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from database import get_db
-import models, schemas
+from sqlalchemy.orm import Session
+import crud, schemas, database
+from typing import Optional
+from fastapi import Query
+import models
+router = APIRouter(
+    prefix="/champions",
+    tags=["Champions"]
+)
 
-
-router = APIRouter(prefix="/champions", tags=["Champions"])
 templates = Jinja2Templates(directory="templates")
 
-@router.get("/create", response_class=HTMLResponse)
-async def create_champion_form(request: Request):
-    return templates.TemplateResponse("create_champion.html", {"request": request})
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
-@router.post("/create", response_class=HTMLResponse)
-async def create_champion_form_post(
+# -----------------------------------------------
+# TEMPLATE: LISTA DE CAMPEONES
+# -----------------------------------------------
+
+
+@router.get("/list", response_class=HTMLResponse)
+def list_champions_page(
     request: Request,
+    rol: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    champions = crud.list_champions_by_winrate(db, rol)
+    roles = ["Top", "JG", "Mid", "Adc", "Sup"]
+    return templates.TemplateResponse(
+        "champion/champions_list.html",
+        {"request": request, "champions": champions, "selected_rol": rol, "roles": roles}
+    )
+
+
+
+# -----------------------------------------------
+# TEMPLATE: FORM PARA CREAR
+# -----------------------------------------------
+@router.get("/new", response_class=HTMLResponse)
+def new_champion_form(request: Request):
+    return templates.TemplateResponse("champion/champion_create.html", {
+        "request": request
+    })
+
+
+# -----------------------------------------------
+# FORM POST CREAR DESDE HTML
+# -----------------------------------------------
+@router.post("/new")
+def submit_new_champion(
     nombre: str = Form(...),
     rol: str = Form(...),
-    tasa_victoria: float = Form(...),
-    tasa_seleccion: float = Form(...),
-    tasa_baneo: float = Form(...),
-    descripcion: str = Form(""),
-    historia: str = Form(""),
-    items: str = Form("")
+    tasa_victoria: float = Form(50.0),
+    tasa_seleccion: float = Form(0.0),
+    tasa_baneo: float = Form(0.0),
+    activo: Optional[str] = Form("on"),  # checkbox
+    db: Session = Depends(get_db)
 ):
-    # Convertir items: "1,2,3" → [1,2,3]
-    item_ids = [int(x.strip()) for x in items.split(",")] if items else []
-
-    payload = {
-        "nombre": nombre,
-        "rol": rol,
-        "tasa_victoria": tasa_victoria,
-        "tasa_seleccion": tasa_seleccion,
-        "tasa_baneo": tasa_baneo,
-        "profile": {
-            "descripcion": descripcion,
-            "historia": historia
-        },
-        "items": item_ids
-    }
-
-    # Reusar tu endpoint API
-    from fastapi.encoders import jsonable_encoder
-    champion_data = schemas.ChampionCreate(**jsonable_encoder(payload))
-
-    return await create_champion(champion_data)
-# ----------------------------------------------------------
-# CREAR
-# ----------------------------------------------------------
-@router.post("/", response_model=schemas.Champion)
-async def create_champion(champion: schemas.ChampionCreate, db: AsyncSession = Depends(get_db)):
-
-    # Validar duplicado
-    result = await db.execute(
-        select(models.Champion).where(models.Champion.nombre == champion.nombre)
+    new_champ = models.Champion(
+        nombre=nombre,
+        rol=rol,
+        tasa_victoria=tasa_victoria,
+        tasa_seleccion=tasa_seleccion,
+        tasa_baneo=tasa_baneo,
+        activo=True if activo == "on" else False
     )
-    existing = result.scalar_one_or_none()
+
+    db.add(new_champ)
+    db.commit()
+    db.refresh(new_champ)
+
+    return RedirectResponse(url="/champions/list", status_code=302)
+# -----------------------------------------------
+# TEMPLATE: DETALLES DEL CAMPEÓN
+# -----------------------------------------------
+@router.get("/{champion_id}/view", response_class=HTMLResponse)
+def view_champion(champion_id: int, request: Request, db: Session = Depends(get_db)):
+    champion = crud.get_champion(db, champion_id)
+    if not champion:
+        raise HTTPException(404, "Champion not found")
+
+    # Combinar ChampionItem + Item
+    items_con_porcentaje = []
+    for item in champion.items:
+        ci = next((ci for ci in champion.champion_items if ci.item_id == item.id), None)
+        if ci:
+            items_con_porcentaje.append((ci, item))
+
+    return templates.TemplateResponse("champion/champion_detail.html", {
+        "request": request,
+        "champion": champion,
+        "all_items": crud.list_items(db),
+        "items_con_porcentaje": items_con_porcentaje
+    })
+
+
+# -----------------------------
+# AGREGAR ITEM AL CAMPEÓN
+# -----------------------------
+@router.post("/{champion_id}/add-item", response_class=HTMLResponse)
+def add_item_to_champion(
+        champion_id: int,
+        item_id: int = Form(...),
+        porcentaje_uso: float = Form(0.0),
+        db: Session = Depends(get_db)
+):
+    champion = crud.get_champion(db, champion_id)
+    if not champion:
+        raise HTTPException(404, "Champion not found")
+
+    # Evitar duplicados
+    existing = next((ci for ci in champion.champion_items if ci.item_id == item_id), None)
     if existing:
-        raise HTTPException(400, "El campeón ya existe")
-
-    # Crear campeón
-    new_champion = models.Champion(
-        nombre=champion.nombre,
-        rol=champion.rol,
-        tasa_victoria=champion.tasa_victoria,
-        tasa_seleccion=champion.tasa_seleccion,
-        tasa_baneo=champion.tasa_baneo,
-        activo=True
-    )
-    db.add(new_champion)
-    await db.commit()
-    await db.refresh(new_champion)
-
-    # Crear profile
-    if champion.profile:
-        prof = models.Profile(
-            champion_id=new_champion.id,
-            descripcion=champion.profile.descripcion,
-            historia=champion.profile.historia
+        existing.porcentaje_uso = porcentaje_uso
+    else:
+        ci = models.ChampionItem(
+            champion_id=champion_id,
+            item_id=item_id,
+            porcentaje_uso=porcentaje_uso
         )
-        db.add(prof)
+        db.add(ci)
 
-    # Asociar items
-    if champion.items:
-        items_result = await db.execute(
-            select(models.Item).where(models.Item.id.in_(champion.items))
-        )
-        items = items_result.scalars().all()
-        new_champion.items.extend(items)
-
-    await db.commit()
-
-    # Recargar con relaciones
-    refreshed = await db.execute(
-        select(models.Champion)
-        .options(selectinload(models.Champion.items),
-                 selectinload(models.Champion.profile))
-        .where(models.Champion.id == new_champion.id)
-    )
-    return refreshed.scalar_one()
+    db.commit()
+    return RedirectResponse(url=f"/champions/{champion_id}/view", status_code=302)
 
 
-# ----------------------------------------------------------
-# LISTAR
-# ----------------------------------------------------------
-@router.get("/", response_model=list[schemas.Champion])
-async def list_champions(db: AsyncSession = Depends(get_db)):
+# -----------------------------------------------
+# TEMPLATE: FORMULARIO EDITAR
+# -----------------------------------------------
+@router.get("/{champion_id}/edit", response_class=HTMLResponse)
+def edit_champion_form(champion_id: int, request: Request, db: Session = Depends(get_db)):
+    champion = crud.get_champion(db, champion_id)
+    if not champion:
+        raise HTTPException(404, "Champion not found")
 
-    result = await db.execute(
-        select(models.Champion)
-        .options(
-            selectinload(models.Champion.items),
-            selectinload(models.Champion.profile)
-        )
-    )
-    return result.scalars().all()
+    return templates.TemplateResponse("champion/champion_edit.html", {
+        "request": request,
+        "champion": champion
+    })
 
 
-# ----------------------------------------------------------
-# OBTENER UNO
-# ----------------------------------------------------------
-@router.get("/{champion_id}", response_model=schemas.Champion)
-async def get_champion(champion_id: int, db: AsyncSession = Depends(get_db)):
+# -----------------------------------------------
+# FORM POST EDIT CHAMPION
+# -----------------------------------------------
+@router.get("/{champion_id}/edit", response_class=HTMLResponse)
+def edit_champion_form(champion_id: int, request: Request, db: Session = Depends(get_db)):
+    champion = crud.get_champion(db, champion_id)
+    if not champion:
+        raise HTTPException(404, "Champion not found")
+    return templates.TemplateResponse("champion/champion_edit.html", {"request": request, "champion": champion})
 
-    result = await db.execute(
-        select(models.Champion)
-        .options(
-            selectinload(models.Champion.items),
-            selectinload(models.Champion.profile)
-        )
-        .where(models.Champion.id == champion_id)
-    )
 
-    champ = result.scalar_one_or_none()
+@router.post("/{champion_id}/edit")
+def submit_edit_champion(
+    champion_id: int,
+    nombre: str = Form(...),
+    rol: str = Form(...),
+    tasa_victoria: float = Form(50.0),
+    tasa_seleccion: float = Form(0.0),
+    tasa_baneo: float = Form(0.0),
+    activo: Optional[str] = Form("on"),
+    db: Session = Depends(get_db)
+):
+    champ = crud.get_champion(db, champion_id)
     if not champ:
-        raise HTTPException(404, "Campeón no encontrado")
+        raise HTTPException(404, "Champion not found")
 
+    if rol not in ["Top", "JG", "Mid", "Adc", "Sup"]:
+        raise HTTPException(status_code=400, detail=f"Rol inválido: {rol}")
+
+    champ.nombre = nombre
+    champ.rol = rol
+    champ.tasa_victoria = tasa_victoria
+    champ.tasa_seleccion = tasa_seleccion
+    champ.tasa_baneo = tasa_baneo
+    champ.activo = True if activo == "on" else False
+
+    db.commit()
+    db.refresh(champ)
+
+    return RedirectResponse(url="/champions/list", status_code=302)
+
+
+# -----------------------------------------------
+# API JSON: OBTENER UN CAMPEÓN
+# -----------------------------------------------
+@router.get("/{champion_id}", response_model=schemas.Champion)
+def get_champion(champion_id: int, db: Session = Depends(get_db)):
+    champ = crud.get_champion(db, champion_id)
+    if not champ:
+        raise HTTPException(404, "Champion not found")
     return champ
 
 
-# ----------------------------------------------------------
-# ACTUALIZAR
-# ----------------------------------------------------------
+# -----------------------------------------------
+# API JSON: OBTENER POR NOMBRE
+# -----------------------------------------------
+@router.get("/by-name/{name}", response_model=schemas.Champion)
+def get_champion_by_name(name: str, db: Session = Depends(get_db)):
+    champ = crud.get_champion_by_name(db, name)
+    if not champ:
+        raise HTTPException(404, "Champion not found")
+    return champ
+
+
+# -----------------------------------------------
+# API JSON: LISTA JSON
+# -----------------------------------------------
+@router.get("/", response_model=list[schemas.Champion])
+def list_champions(skip: int = 0, limit: int = 100, include_inactive: bool = False, db: Session = Depends(get_db)):
+    return crud.list_champions(db, skip, limit, include_inactive)
+
+
+# -----------------------------------------------
+# API JSON: CREAR
+# -----------------------------------------------
+@router.post("/", response_model=schemas.Champion)
+def create_champion(champion: schemas.ChampionCreate, db: Session = Depends(get_db)):
+    return crud.create_champion(db, champion)
+
+
+# -----------------------------------------------
+# API JSON: EDITAR
+# -----------------------------------------------
 @router.put("/{champion_id}", response_model=schemas.Champion)
-async def update_champion(champion_id: int, data: schemas.ChampionUpdate, db: AsyncSession = Depends(get_db)):
-
-    result = await db.execute(
-        select(models.Champion)
-        .options(selectinload(models.Champion.items))
-        .where(models.Champion.id == champion_id)
-    )
-    champ = result.scalar_one_or_none()
-
-    if not champ:
-        raise HTTPException(404, "No encontrado")
-
-    payload = data.dict(exclude_unset=True)
-
-    # Si vienen items → reemplazar
-    if "items" in payload:
-        new_items_result = await db.execute(
-            select(models.Item).where(models.Item.id.in_(payload["items"]))
-        )
-        champ.items = new_items_result.scalars().all()
-        del payload["items"]
-
-    # Actualizar campos simples
-    for k, v in payload.items():
-        setattr(champ, k, v)
-
-    await db.commit()
-
-    # Recargar con relaciones
-    refreshed = await db.execute(
-        select(models.Champion)
-        .options(selectinload(models.Champion.items),
-                 selectinload(models.Champion.profile))
-        .where(models.Champion.id == champion_id)
-    )
-    return refreshed.scalar_one()
+def update_champion(champion_id: int, champion: schemas.ChampionUpdate, db: Session = Depends(get_db)):
+    updated = crud.update_champion(db, champion_id, champion)
+    if not updated:
+        raise HTTPException(404, "Champion not found")
+    return updated
 
 
-# ----------------------------------------------------------
-# ELIMINAR
-# ----------------------------------------------------------
-@router.delete("/{champion_id}")
-async def delete_champion(champion_id: int, db: AsyncSession = Depends(get_db)):
+# -----------------------------------------------
+# API JSON: BORRADO SUAVE
+# -----------------------------------------------
+@router.delete("/{champion_id}", response_model=schemas.Champion)
+def soft_delete_champion(champion_id: int, db: Session = Depends(get_db)):
+    deleted = crud.soft_delete_champion(db, champion_id)
+    if not deleted:
+        raise HTTPException(404, "Champion not found")
+    return deleted
 
-    result = await db.execute(
-        select(models.Champion).where(models.Champion.id == champion_id)
-    )
-    champ = result.scalar_one_or_none()
 
-    if not champ:
-        raise HTTPException(404, "No encontrado")
-
-    await db.delete(champ)
-    await db.commit()
-
-    return {"message": "Eliminado correctamente"}

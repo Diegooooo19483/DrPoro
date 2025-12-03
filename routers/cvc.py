@@ -1,72 +1,35 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
-from sqlalchemy.orm import selectinload
-
+from fastapi import APIRouter, Request, Depends, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy.orm import Session
 from database import get_db
-import models, schemas
+import crud
+from fastapi.templating import Jinja2Templates
 
+router = APIRouter(prefix="/cvc", tags=["CVC"])
+templates = Jinja2Templates(directory="templates")
 
-router = APIRouter(prefix="/cvc", tags=["Campeón vs Campeón"])
+@router.get("/", response_class=HTMLResponse)
+def list_cvc(request: Request, db: Session = Depends(get_db)):
+    data = crud.list_cvc(db)
+    return templates.TemplateResponse("cvc/cvc_list.html", {"request": request, "cvc_list": data})
 
+@router.get("/new", response_class=HTMLResponse)
+def create_cvc_form(request: Request, db: Session = Depends(get_db)):
+    champions = crud.list_champions(db)
+    return templates.TemplateResponse("cvc/cvc_create.html", {
+        "request": request,
+        "champions": champions
+    })
 
-# ----------------------------------------------------------
-# CREAR CVC
-# ----------------------------------------------------------
-@router.post("/", response_model=schemas.CVC)
-async def create_cvc(data: schemas.CVCCreate, db: AsyncSession = Depends(get_db)):
+@router.post("/new")
+def create_cvc(
+    request: Request,
+    db: Session = Depends(get_db),
+    champion_id: int = Form(...),
+    oponente_id: int = Form(...),
+    winrate: float = Form(...)
+):
+    # Llamar al CRUD que hace el cálculo automático
+    crud.create_cvc(db, champion_id, oponente_id, winrate)
+    return RedirectResponse(url="/cvc", status_code=303)
 
-    if data.champion_id == data.oponente_id:
-        raise HTTPException(400, "Un campeón no puede enfrentarse a sí mismo")
-
-    # Verificar si ya existe relación
-    result = await db.execute(
-        select(models.ChampionVsChampion).where(
-            and_(
-                models.ChampionVsChampion.champion_id == data.champion_id,
-                models.ChampionVsChampion.oponente_id == data.oponente_id
-            )
-        )
-    )
-    exists = result.scalar_one_or_none()
-    if exists:
-        raise HTTPException(400, "Ya existe el enfrentamiento")
-
-    # Crear registro
-    cvc = models.ChampionVsChampion(
-        champion_id=data.champion_id,
-        oponente_id=data.oponente_id,
-        winrate=data.winrate,
-    )
-
-    db.add(cvc)
-    await db.commit()
-
-    # Recargar con relaciones
-    refreshed = await db.execute(
-        select(models.ChampionVsChampion)
-        .options(
-            selectinload(models.ChampionVsChampion.champion),
-            selectinload(models.ChampionVsChampion.oponente)
-        )
-        .where(models.ChampionVsChampion.id == cvc.id)
-    )
-
-    return refreshed.scalar_one()
-
-
-# ----------------------------------------------------------
-# LISTAR CVC
-# ----------------------------------------------------------
-@router.get("/", response_model=list[schemas.CVC])
-async def list_cvc(db: AsyncSession = Depends(get_db)):
-
-    result = await db.execute(
-        select(models.ChampionVsChampion)
-        .options(
-            selectinload(models.ChampionVsChampion.champion),
-            selectinload(models.ChampionVsChampion.oponente)
-        )
-    )
-
-    return result.scalars().all()

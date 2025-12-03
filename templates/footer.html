@@ -1,0 +1,25 @@
+<!-- templates/partials/footer.html -->
+<footer class="footer">
+    <div class="footer-container">
+
+        <!-- Logo y descripción -->
+        <div class="footer-logo">
+            <img src="{{ url_for('static', path='images/logo dr.png') }}" alt="Logo DR PorO" class="footer-logo-img">
+            <p>DR Poro - Todo sobre campeones y items</p>
+        </div>
+
+        <!-- Enlaces de navegación -->
+        <div class="footer-links">
+            <a href="/">Inicio</a>
+            <a href="/champions/list">Tier List</a>
+            <a href="/items">Items</a>
+            <a href="/cvc">CVC</a>
+        </div>
+
+
+        <!-- Texto de copyright -->
+        <p class="footer-text">© 2025 DR PorO. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<link rel="stylesheet" href="{{ url_for('static', path='foot.css') }}">

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Item: {{ item.nombre }}{% endblock %}
+
+{% block content %}
+<h1>Detalles del Item</h1>
+
+<ul class="list-group">
+    <li class="list-group-item"><strong>ID:</strong> {{ item.id }}</li>
+    <li class="list-group-item"><strong>Nombre:</strong> {{ item.nombre }}</li>
+    <li class="list-group-item"><strong>Tipo:</strong> {{ item.tipo }}</li>
+    <li class="list-group-item"><strong>Descripción:</strong> {{ item.descripcion }}</li>
+</ul>
+
+<br>
+
+<a href="/items/{{ item.id }}/edit" class="btn btn-warning">Editar</a>
+<a href="/items" class="btn btn-secondary">Volver</a>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>{{ profile.nombre_perfil }}</h1>
+    <p>Cuenta: {{ profile.nombre_cuenta }}</p>
+    <p>Región: {{ profile.region }}</p>
+
+    {% if profile.foto %}
+        <img src="/{{ profile.foto }}" alt="Foto de perfil" width="150">
+    {% endif %}
+
+    <h2>Campeones Favoritos</h2>
+    <ul>
+    {% for champ in profile.campeones_favoritos %}
+        <li>
+            {{ champ.nombre }}
+
+            <!-- Botón para ver detalles -->
+            <a href="/champions/{{ champ.id }}/view">
+
+                <button>Ver detalles</button>
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

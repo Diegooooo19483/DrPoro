@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Crear Nuevo Campeón</h2>
+
+<form action="/champions/new" method="post" style="display: flex; flex-direction: column; gap: 16px; max-width: 500px;">
+
+    <label for="nombre">Nombre:</label>
+    <input type="text" name="nombre" id="nombre" required placeholder="Ej: Ahri"
+           style="padding: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: #eee;">
+
+    <label for="rol">Rol:</label>
+    <select name="rol" id="rol" required
+            style="padding: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: #eee;">
+        <option value="Top">Top</option>
+        <option value="JG">JG</option>
+        <option value="Mid">Mid</option>
+        <option value="Adc">Adc</option>
+        <option value="Sup">Sup</option>
+    </select>
+
+
+    <label for="tasa_victoria">Tasa Victoria (%):</label>
+    <input type="number" name="tasa_victoria" id="tasa_victoria" step="0.1" value="50"
+           style="padding: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: #eee;">
+
+    <label for="tasa_seleccion">Tasa Selección (%):</label>
+    <input type="number" name="tasa_seleccion" id="tasa_seleccion" step="0.1" value="0"
+           style="padding: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: #eee;">
+
+    <label for="tasa_baneo">Tasa Baneo (%):</label>
+    <input type="number" name="tasa_baneo" id="tasa_baneo" step="0.1" value="0"
+           style="padding: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: #eee;">
+
+    <label>
+        <input type="checkbox" name="activo" checked>
+        Activo
+    </label>
+
+    <button type="submit" style="
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        background: #3b82f6;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    " onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+        Crear Campeón
+    </button>
+
+</form>
+{% endblock %}

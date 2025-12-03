@@ -1,0 +1,69 @@
+.champion-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+/* Contenido textual del campeón */
+.champion-text {
+    flex: 1;
+}
+
+/* Contenedor de la foto del campeón */
+.champion-photo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Foto del campeón */
+.champion-photo {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid gold;
+    box-shadow: 0 0 15px gold;
+}
+
+/* Placeholder para foto */
+.champion-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    color: gold;
+    font-size: 3.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 3px solid gold;
+    box-shadow: 0 0 15px gold;
+    text-align: center;
+}
+
+/* Formulario subir foto */
+.champion-text form {
+    margin-top: 10px;
+}
+
+.champion-text form input[type="file"] {
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.champion-text form button {
+    background-color: gold;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.champion-text form button:hover {
+    background-color: #ffd700;
+}

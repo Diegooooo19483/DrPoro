@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Editar Campeón</h2>
+
+<form action="/champions/{{ champion.id }}/edit" method="post">
+
+    <label>Nombre:
+        <input type="text" name="nombre" value="{{ champion.nombre }}" required>
+    </label>
+
+    <label>Rol:
+        <input type="text" name="rol" value="{{ champion.rol }}" required>
+    </label>
+
+    <label>Tasa de Victoria:
+        <input type="number" step="0.1" name="tasa_victoria" value="{{ champion.tasa_victoria }}">
+    </label>
+
+    <label>Tasa de Selección:
+        <input type="number" step="0.1" name="tasa_seleccion" value="{{ champion.tasa_seleccion }}">
+    </label>
+
+    <label>Tasa de Baneo:
+        <input type="number" step="0.1" name="tasa_baneo" value="{{ champion.tasa_baneo }}">
+    </label>
+
+    <label>Activo:
+        <input type="checkbox" name="activo" {% if champion.activo %}checked{% endif %}>
+    </label>
+
+    <label>Descripción:
+        <textarea name="descripcion">{{ champion.profile.descripcion if champion.profile else "" }}</textarea>
+    </label>
+
+    <label>Historia:
+        <textarea name="historia">{{ champion.profile.historia if champion.profile else "" }}</textarea>
+    </label>
+
+    <button type="submit">Guardar Cambios</button>
+
+</form>
+
+{% endblock %}

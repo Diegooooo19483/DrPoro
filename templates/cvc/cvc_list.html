@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Counter vs Counter (CVC)</h1>
+
+<a href="/cvc/new" class="btn">➕ Agregar nuevo CVC</a>
+
+<table border="1" cellpadding="8" style="width:100%; margin-top: 20px; border-collapse: collapse; text-align: left;">
+    <thead>
+        <tr style="background: #333; color: gold;">
+            <th>ID</th>
+            <th>Campeón</th>
+            <th>Oponente</th>
+            <th>Winrate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in cvc_list %}
+        <tr style="background: #1a1a1a; color: #eee;">
+            <td>{{ c.id }}</td>
+            <td>{{ c.champion.nombre }}</td>
+            <td>{{ c.oponente.nombre }}</td>
+            <td>{{ "%.1f"|format(c.winrate) }}%</td>
+        </tr>
+        {% else %}
+        <tr style="background: #1a1a1a; color: #eee;">
+            <td colspan="4">No hay enfrentamientos registrados.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

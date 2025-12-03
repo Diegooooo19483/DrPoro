@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Lista de Campeones</h2>
+
+<form method="get" style="margin-bottom: 20px;">
+    <label for="rol">Filtrar por rol:</label>
+    <select name="rol" id="rol" onchange="this.form.submit()">
+        <option value="">Todos</option>
+        {% for r in roles %}
+            <option value="{{ r }}" {% if r == selected_rol %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Rol</th>
+        <th>Tasa Victoria (%)</th>
+        <th>Activo</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for champ in champions %}
+    <tr>
+        <td>{{ champ.id }}</td>
+        <td>{{ champ.nombre }}</td>
+        <td>{{ champ.rol }}</td>
+        <td>{{ champ.tasa_victoria }}</td>
+        <td>{{ "Sí" if champ.activo else "No" }}</td>
+        <td>
+            <a href="/champions/{{ champ.id }}/view">Ver</a> |
+            <a href="/champions/{{ champ.id }}/edit">Editar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="/champions/new">
+    <button>Crear Nuevo Campeón</button>
+</a>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Editar Ítem: {{ item.nombre }}</h1>
+
+<form method="post" action="/items/{{ item.id }}/edit">
+    <label for="nombre">Nombre:</label><br>
+    <input type="text" id="nombre" name="nombre" value="{{ item.nombre }}" required><br><br>
+
+    <label for="tipo">Tipo:</label><br>
+    <input type="text" id="tipo" name="tipo" value="{{ item.tipo }}"><br><br>
+
+    <label for="porcentaje_uso">Porcentaje de uso:</label><br>
+    <input type="number" id="porcentaje_uso" name="porcentaje_uso" step="0.1" value="{{ item.porcentaje_uso }}"><br><br>
+
+    <button type="submit" class="btn btn-primary">Actualizar Ítem</button>
+    <a href="/items/{{ item.id }}/view" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}

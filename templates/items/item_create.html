@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Item{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 40px auto; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #f9f9f9;">
+    <h2 style="text-align:center; margin-bottom: 20px; color: #2c3e50;">Crear Nuevo Item</h2>
+    <form action="/items/new" method="post" style="display: flex; flex-direction: column; gap: 15px;">
+
+        <label for="nombre" style="font-weight: bold;">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre del item" required
+               style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+
+        <label for="tipo" style="font-weight: bold;">Tipo:</label>
+        <input type="text" id="tipo" name="tipo" placeholder="Tipo de item"
+               style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+
+        <label for="porcentaje_uso" style="font-weight: bold;">Porcentaje de Uso:</label>
+        <input type="number" id="porcentaje_uso" name="porcentaje_uso" step="0.01" value="0.0"
+               style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+
+        <button type="submit"
+                style="padding: 10px; background-color: #3498db; color: white; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">
+            Crear Item
+        </button>
+    </form>
+</div>
+{% endblock %}

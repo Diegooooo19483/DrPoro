@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Resultados de búsqueda para: "{{ query }}"</h2>
+
+{% if champions %}
+    <h3>Campeones</h3>
+    <ul>
+        {% for champ in champions %}
+            <li><a href="/champions/{{ champ.id }}/view">{{ champ.nombre }} (Winrate: {{ champ.winrate }}%)</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if items %}
+    <h3>Items</h3>
+    <ul>
+        {% for item in items %}
+            <li><a href="/items/{{ item.id }}/view">{{ item.nombre }} (Tipo: {{ item.tipo }})</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if not champions and not items %}
+    <p>No se encontraron resultados.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Items{% endblock %}
+
+{% block content %}
+<h1>Lista de Items</h1>
+
+<a href="/items/new" class="btn btn-primary">Crear nuevo ítem</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Tipo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.nombre }}</td>
+            <td>{{ item.tipo }}</td>
+            <td>
+                <a href="/items/{{ item.id }}/view" class="btn btn-info btn-sm">Ver</a>
+                <a href="/items/{{ item.id }}/edit" class="btn btn-warning btn-sm">Editar</a>
+                <form method="post" action="/items/{{ item.id }}/delete" style="display:inline;">
+    <button class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar ítem?')">
+        Borrar
+    </button>
+</form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

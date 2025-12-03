@@ -1,0 +1,1 @@
+# drporo integrated with your models/schemas/crud\n\nRun with:\n\n```\nexport DATABASE_URL="sqlite:///./drporo.db"\nuvicorn main:app --reload\n```\n

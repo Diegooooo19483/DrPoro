@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Agregar Item a {{ champion.nombre }}</h2>
+
+<form action="/champion-items/{{ champion.id }}/add" method="post">
+
+    <label>Item:
+        <select name="item_id" required>
+            {% for it in items %}
+            <option value="{{ it.id }}">{{ it.nombre }} ({{ it.tipo }})</option>
+            {% endfor %}
+        </select>
+    </label>
+    <br/><br/>
+
+    <label>Porcentaje uso:
+        <input type="number" name="porcentaje_uso" step="0.1" value="0">
+    </label>
+    <br/><br/>
+
+    <button type="submit">Agregar item</button>
+</form>
+
+<br/>
+<a href="/champion-items/{{ champion.id }}">⬅ Volver a items del campeón</a>
+{% endblock %}

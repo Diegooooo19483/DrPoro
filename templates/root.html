@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', path='root.css') }}">
+
+<div class="root-container">
+
+    <!-- Imagen centrada arriba -->
+    <div class="root-logo-container">
+        <img src="/static/images/logo%20dr.png" alt="Logo" class="root-logo">
+    </div>
+
+    <!-- Barra de búsqueda centrada -->
+    <form action="/search" method="get" class="root-search-form">
+        <input type="text" name="q" placeholder="Buscar campeón o ítem..." class="root-search-input" required>
+        <span class="root-search-icon">🔍</span>
+    </form>
+
+    <!-- Navbar grande centrada debajo -->
+    <nav class="root-navbar">
+        <a href="/userprofiles/new" class="btn btn-primary">Crear perfil</a>
+    </nav>
+
+</div>
+{% endblock %}

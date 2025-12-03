@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Registrar enfrentamiento: Champion vs Champion</h1>
+
+<form action="/cvc/new" method="post">
+    <label for="champion_id">Champion:</label><br>
+    <select id="champion_id" name="champion_id" required>
+        {% for champ in champions %}
+            <option value="{{ champ.id }}">{{ champ.nombre }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="oponente_id">Oponente:</label><br>
+    <select id="oponente_id" name="oponente_id" required>
+        {% for champ in champions %}
+            <option value="{{ champ.id }}">{{ champ.nombre }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="winrate">Winrate del Champion (%) frente al Oponente:</label><br>
+    <input type="number" id="winrate" name="winrate" min="0" max="100" step="0.1" required><br><br>
+
+    <button type="submit" class="btn">Guardar Enfrentamiento</button>
+</form>
+{% endblock %}
