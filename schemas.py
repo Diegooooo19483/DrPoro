@@ -1,6 +1,10 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
+# ============================================================
+# 🟦 PROFILE (información extendida del campeón)
+# ============================================================
+
 class ProfileBase(BaseModel):
     descripcion: Optional[str] = ""
     historia: Optional[str] = ""
@@ -11,8 +15,14 @@ class ProfileCreate(ProfileBase):
 class Profile(ProfileBase):
     id: int
     champion_id: int
+
     class Config:
         orm_mode = True
+
+
+# ============================================================
+# 🟩 ITEMS
+# ============================================================
 
 class ItemBase(BaseModel):
     nombre: str
@@ -30,10 +40,14 @@ class ItemUpdate(BaseModel):
 class Item(ItemBase):
     id: int
     activo: bool
+
     class Config:
         orm_mode = True
 
-from pydantic import BaseModel
+
+# ============================================================
+# 🟥 CHAMPIONS
+# ============================================================
 
 class ChampionBase(BaseModel):
     nombre: str
@@ -47,19 +61,23 @@ class ChampionCreate(ChampionBase):
     pass
 
 class ChampionUpdate(BaseModel):
-    nombre: str | None = None
-    rol: str | None = None
-    tasa_victoria: float | None = None
-    tasa_seleccion: float | None = None
-    tasa_baneo: float | None = None
-    activo: bool | None = None
+    nombre: Optional[str] = None
+    rol: Optional[str] = None
+    tasa_victoria: Optional[float] = None
+    tasa_seleccion: Optional[float] = None
+    tasa_baneo: Optional[float] = None
+    activo: Optional[bool] = None
 
 class Champion(ChampionBase):
     id: int
 
     class Config:
-        from_attributes = True  # ← esto permite usar ORM directamente
+        from_attributes = True  # usar ORM directamente
 
+
+# ============================================================
+# 🟧 Champion vs Champion (CVC)
+# ============================================================
 
 class CVCBase(BaseModel):
     champion_id: int
@@ -71,19 +89,22 @@ class CVCCreate(CVCBase):
 
 class CVC(CVCBase):
     id: int
+
     class Config:
         orm_mode = True
 
+
+# ============================================================
+# 🟨 ChampionItem (relación campeón ↔ items)
+# ============================================================
 
 class ChampionItemBase(BaseModel):
     champion_id: int
     item_id: int
     porcentaje_uso: Optional[float] = 0.0
 
-
 class ChampionItemCreate(ChampionItemBase):
     pass
-
 
 class ChampionItem(ChampionItemBase):
     id: int
@@ -92,12 +113,9 @@ class ChampionItem(ChampionItemBase):
         orm_mode = True
 
 
-
-
-
-
-from pydantic import BaseModel
-from typing import List, Optional
+# ============================================================
+# 🟦 USER PROFILE
+# ============================================================
 
 class UserProfileBase(BaseModel):
     nombre_perfil: str
@@ -111,5 +129,6 @@ class UserProfileCreate(UserProfileBase):
 
 class UserProfile(UserProfileBase):
     id: int
+
     class Config:
         orm_mode = True

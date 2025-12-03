@@ -6,7 +6,6 @@
     <title>{{ title if title else "DR Poro" }}</title>
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
     <style>
-        /* BODY */
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,7 +13,6 @@
             color: #eee;
         }
 
-        /* NAVBAR */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -58,7 +56,6 @@
             color: #fff;
         }
 
-        /* SEARCH BAR */
         .search-form {
             position: relative;
             display: flex;
@@ -118,7 +115,6 @@
             background: #333;
         }
 
-        /* CONTAINER */
         .container {
             max-width: 1200px;
             margin: 40px auto;
@@ -128,7 +124,6 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
 
-        /* BUTTONS GENERALES */
         .btn {
             padding: 12px 30px;
             border-radius: 10px;
@@ -145,14 +140,10 @@
             background: #ffd700;
             transform: scale(1.05);
         }
-
-
-
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-logo">
             <img src="{{ url_for('static', path='images/logo dr.png') }}" alt="Logo">
@@ -160,13 +151,12 @@
         </div>
 
         <div class="navbar-links">
-         <a href="/">Inicio</a>
-         <a href="/cvc" >Matchaps</a>
-         <a href="/champions/list">Tier list</a>
-         <a href="/items">Items</a>
-         <a href="/userprofiles/view/1">Perfil</a>
+            <a href="/">Inicio</a>
+            <a href="/cvc">Matchaps</a>
+            <a href="/champions/list">Tier list</a>
+            <a href="/items">Items</a>
+            <a href="/userprofiles/view/1">Perfil</a>
         </div>
-
 
         <form action="/search" method="get" class="search-form">
             <input type="text" name="q" placeholder="Buscar campeón o item..." class="search-input" required>
@@ -174,13 +164,11 @@
         </form>
     </nav>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <div class="container">
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- FOOTER -->
     {% include 'footer.html' %}
 
 </body>

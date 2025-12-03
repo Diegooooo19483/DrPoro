@@ -6,19 +6,16 @@
     margin-bottom: 30px;
 }
 
-/* Contenido textual del campeón */
 .champion-text {
     flex: 1;
 }
 
-/* Contenedor de la foto del campeón */
 .champion-photo-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* Foto del campeón */
 .champion-photo {
     width: 180px;
     height: 180px;
@@ -28,7 +25,6 @@
     box-shadow: 0 0 15px gold;
 }
 
-/* Placeholder para foto */
 .champion-photo-placeholder {
     display: flex;
     align-items: center;
@@ -45,7 +41,6 @@
     text-align: center;
 }
 
-/* Formulario subir foto */
 .champion-text form {
     margin-top: 10px;
 }

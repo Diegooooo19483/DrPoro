@@ -5,7 +5,6 @@
     margin-top: 50px;
 }
 
-/* Imagen más grande y centrada */
 .root-logo-container {
     display: flex;
     justify-content: center;
@@ -13,17 +12,16 @@
 }
 
 .root-logo {
-    width: 250px;   /* Más grande que antes */
+    width: 250px;
     height: 250px;
     border-radius: 50%;
     object-fit: cover;
     box-shadow: 0 0 25px gold;
 }
 
-/* Barra de búsqueda solo para root */
 .root-search-form {
     position: relative;
-    width: 60%;  /* ancho de la barra */
+    width: 60%;
     display: flex;
     justify-content: center;
     margin-bottom: 30px;
@@ -31,7 +29,7 @@
 
 .root-search-input {
     width: 100%;
-    padding: 14px 45px 14px 20px; /* más grande que antes */
+    padding: 14px 45px 14px 20px;
     border-radius: 25px;
     border: 1px solid #444;
     font-size: 1.3rem;
@@ -53,7 +51,6 @@
     pointer-events: none;
 }
 
-/* Navbar centrada debajo */
 .root-navbar {
     display: flex;
     justify-content: center;
