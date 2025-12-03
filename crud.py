@@ -116,7 +116,7 @@ def list_cvc(db: Session):
     return db.query(models.ChampionVsChampion).all()
 
 
-# 📌 CREAR UN NUEVO ENFRENTAMIENTO
+#  CREAR UN NUEVO ENFRENTAMIENTO
 def create_cvc(db: Session, champion_id: int, oponente_id: int, winrate: float):
     # Guardar el registro del champion
     cvc = models.ChampionVsChampion(
