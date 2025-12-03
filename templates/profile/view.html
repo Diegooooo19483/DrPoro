@@ -1,26 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>{{ profile.nombre_perfil }}</h1>
-    <p>Cuenta: {{ profile.nombre_cuenta }}</p>
-    <p>Región: {{ profile.region }}</p>
+<div class="container profile-card">
 
-    {% if profile.foto %}
-        <img src="/{{ profile.foto }}" alt="Foto de perfil" width="150">
-    {% endif %}
+    <h1 class="profile-title">{{ profile.nombre_perfil }}</h1>
 
-    <h2>Campeones Favoritos</h2>
-    <ul>
-    {% for champ in profile.campeones_favoritos %}
-        <li>
-            {{ champ.nombre }}
+    <div class="profile-info">
+        <p><strong>Cuenta:</strong> {{ profile.nombre_cuenta }}</p>
+        <p><strong>Región:</strong> {{ profile.region }}</p>
 
+        {% if profile.foto %}
+            <img src="/{{ profile.foto }}" alt="Foto de perfil" class="profile-img">
+        {% endif %}
+    </div>
+
+    <h2 class="section-title">Campeones Favoritos</h2>
+
+    <ul class="champ-list">
+        {% for champ in profile.campeones_favoritos %}
+        <li class="champ-item">
+            <span>{{ champ.nombre }}</span>
             <a href="/champions/{{ champ.id }}/view">
-
-                <button>Ver detalles</button>
+                <button class="btn-gold">Ver detalles</button>
             </a>
         </li>
-    {% endfor %}
+        {% endfor %}
     </ul>
 
+</div>
 {% endblock %}

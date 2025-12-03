@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>🗑️ Campeones Eliminados</h2>
+
+<!-- VOLVER -->
+<div style="margin-bottom: 20px;">
+    <a href="/champions/list">
+        <button class="primary" style="padding:6px 12px;">← Volver</button>
+    </a>
+</div>
+
+{% if champions %}
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Rol</th>
+        <th>Tasa Victoria (%)</th>
+        <th>Acciones</th>
+    </tr>
+
+    {% for champ in champions %}
+    <tr>
+        <td>{{ champ.id }}</td>
+        <td>{{ champ.nombre }}</td>
+        <td>{{ champ.rol }}</td>
+        <td>{{ champ.tasa_victoria }}</td>
+
+        <td style="display:flex; gap:10px; align-items:center;">
+
+            <!-- Ver -->
+            <a href="/champions/{{ champ.id }}/view" class="action-link">Ver</a>
+
+            <!-- Restaurar -->
+            <form action="/champions/{{ champ.id }}/activate" method="post" style="display:inline;">
+                <button
+                    style="
+                        background:#27ae60;
+                        color:white;
+                        padding:4px 8px;
+                        border:none;
+                        border-radius:6px;
+                        cursor:pointer;
+                    ">
+                    Restaurar
+                </button>
+            </form>
+
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No hay campeones eliminados.</p>
+{% endif %}
+
+{% endblock %}

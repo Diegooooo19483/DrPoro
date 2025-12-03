@@ -1,64 +1,78 @@
+/* TÍTULO CENTRAL */
+.champion-title {
+    text-align: center;
+    font-size: 36px;
+    color: #d4af37; /* dorado */
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 0px 0px 8px rgba(212, 175, 55, 0.6);
+}
+
+/* CONTENEDOR PRINCIPAL */
 .champion-info {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 30px;
-    margin-bottom: 30px;
+    gap: 25px;
+    padding: 25px;
+    background: rgba(20, 20, 20, 0.85); /* negro suave */
+    border-radius: 14px;
+    border: 2px solid #d4af37; /* borde dorado */
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+    margin-bottom: 25px;
 }
 
+/* TEXTO */
 .champion-text {
     flex: 1;
+    color: #f0e6d2; /* crema League of Legends */
+    font-size: 17px;
+    line-height: 1.5;
 }
 
-.champion-photo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* SUBTÍTULOS */
+.champion-text h3 {
+    color: #d4af37; /* dorado */
+    margin-top: 15px;
 }
 
+/* FOTO */
 .champion-photo {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
+    width: 260px;
+    height: 260px;
+    border-radius: 12px;
     object-fit: cover;
-    border: 3px solid gold;
-    box-shadow: 0 0 15px gold;
+    border: 2px solid #d4af37;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
 }
 
-.champion-photo-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    color: gold;
-    font-size: 3.5rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    border: 3px solid gold;
-    box-shadow: 0 0 15px gold;
-    text-align: center;
+/* TABLAS ABAJO */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
 }
 
-.champion-text form {
-    margin-top: 10px;
+table th {
+    background: #1f1f1f;
+    color: #d4af37;
+    padding: 8px;
+    border-bottom: 2px solid #d4af37;
 }
 
-.champion-text form input[type="file"] {
-    padding: 5px;
-    margin-bottom: 5px;
+table td {
+    padding: 8px;
+    color: #f5f5f5;
+    background: rgba(255,255,255,0.05);
 }
 
-.champion-text form button {
-    background-color: gold;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
+table tr:nth-child(even) td {
+    background: rgba(255,255,255,0.1);
 }
 
-.champion-text form button:hover {
-    background-color: #ffd700;
+/* LINKS */
+a {
+    color: #d4af37;
+}
+a:hover {
+    text-decoration: underline;
 }

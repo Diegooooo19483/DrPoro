@@ -3,7 +3,21 @@
 {% block content %}
 <h2>Lista de Campeones</h2>
 
-<form method="get" style="margin-bottom: 20px;">
+<!-- BOTÓN PARA VER BORRADOS - NUEVO -->
+<div style="margin-bottom: 20px; display: flex; gap: 10px;">
+    <a href="/champions/new">
+        <button>Crear Nuevo Campeón</button>
+    </a>
+
+    <a href="/champions/deleted" style="margin-left: auto;">
+        <button style="background-color: #6c757d; color: white;">
+            🗑️ Ver Campeones Borrados
+        </button>
+    </a>
+</div>
+
+<!-- FILTRO POR ROL -->
+<form method="get" style="margin-bottom: 20px; margin-top: 20px;">
     <label for="rol">Filtrar por rol:</label>
     <select name="rol" id="rol" onchange="this.form.submit()">
         <option value="">Todos</option>
@@ -13,6 +27,7 @@
     </select>
 </form>
 
+<!-- TABLA -->
 <table>
     <tr>
         <th>ID</th>
@@ -30,16 +45,21 @@
         <td>{{ champ.rol }}</td>
         <td>{{ champ.tasa_victoria }}</td>
         <td>{{ "Sí" if champ.activo else "No" }}</td>
-        <td>
-            <a href="/champions/{{ champ.id }}/view">Ver</a> |
-            <a href="/champions/{{ champ.id }}/edit">Editar</a>
+        <td style="display:flex; gap:10px; align-items:center;">
+            <a href="/champions/{{ champ.id }}/view" class="action-link">Ver</a>
+            <a href="/champions/{{ champ.id }}/edit" class="action-link">Editar</a>
+
+            {% if champ.activo %}
+            <!-- SOFT DELETE -->
+            <form action="/champions/{{ champ.id }}/delete" method="post" style="display:inline;">
+                <button class="delete-text-btn">Eliminar</button>
+            </form>
+            {% else %}
+            <span style="color: var(--text-muted);">Eliminado</span>
+            {% endif %}
         </td>
     </tr>
     {% endfor %}
 </table>
-
-<a href="/champions/new">
-    <button>Crear Nuevo Campeón</button>
-</a>
 
 {% endblock %}

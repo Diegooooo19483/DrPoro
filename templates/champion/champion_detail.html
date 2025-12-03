@@ -3,7 +3,7 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', path='champion_detail.css') }}">
 
-<h2>Detalles del Campeón: {{ champion.nombre }}</h2>
+<h2 class="champion-title">{{ champion.nombre }}</h2>
 
 <div class="champion-info">
     <div class="champion-text">
@@ -11,10 +11,10 @@
         <p><strong>Rol:</strong> {{ champion.rol }}</p>
         <p><strong>Activo:</strong> {{ "Sí" if champion.activo else "No" }}</p>
 
-        <h3>Stats</h3>
-        <p><strong>Tasa Victoria:</strong> {{ champion.tasa_victoria }}%</p>
-        <p><strong>Tasa Selección:</strong> {{ champion.tasa_seleccion }}%</p>
-        <p><strong>Tasa Baneo:</strong> {{ champion.tasa_baneo }}%</p>
+        <h3>Estadísticas</h3>
+        <p><strong>Tasa de Victoria:</strong> {{ champion.tasa_victoria }}%</p>
+        <p><strong>Tasa de Selección:</strong> {{ champion.tasa_seleccion }}%</p>
+        <p><strong>Tasa de Baneo:</strong> {{ champion.tasa_baneo }}%</p>
 
         <h3>Perfil</h3>
         {% if champion.profile %}
@@ -29,6 +29,57 @@
         <img src="/{{ champion.profile.foto }}" alt="Foto del campeón" class="champion-photo">
     {% endif %}
 </div>
+
+<hr>
+
+<!-- 📊 GRÁFICA -->
+<h3>Gráfica de estadísticas</h3>
+<canvas id="statsChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById("statsChart");
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Winrate", "Pickrate", "Banrate"],
+            datasets: [{
+                label: "Porcentaje (%)",
+                data: [
+                    {{ champion.tasa_victoria }},
+                    {{ champion.tasa_seleccion }},
+                    {{ champion.tasa_baneo }}
+                ],
+                backgroundColor: "rgba(212, 175, 55, 0.6)", /* dorado translúcido */
+                borderColor: "#d4af37", /* dorado sólido */
+                borderWidth: 2,
+                hoverBackgroundColor: "rgba(212, 175, 55, 0.85)",
+                hoverBorderColor: "#f5d98a",
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#d4af37", /* texto dorado */
+                        font: { size: 14 }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: "#f0e6d2" }, /* texto crema */
+                    grid: { color: "rgba(255,255,255,0.1)" }
+                },
+                y: {
+                    ticks: { color: "#f0e6d2" },
+                    grid: { color: "rgba(255,255,255,0.1)" }
+                }
+            }
+        }
+    });
+</script>
 
 <hr>
 
@@ -84,7 +135,6 @@
     <p>No hay enfrentamientos registrados para este campeón.</p>
 {% endif %}
 
+<a href="/champions/list">Volver a la lista de campeones</a>
 
-
-<a href="/champions/list"> Volver a la lista de campeones</a>
 {% endblock %}
