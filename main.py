@@ -1,24 +1,33 @@
-from fastapi import FastAPI,  Depends, Request
+from fastapi import FastAPI, Depends, Request
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
-from database import get_db
 from fastapi.templating import Jinja2Templates
-from database import init_db
 from fastapi.responses import HTMLResponse
+from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
+
+from database import get_db, init_db
 from routers import champions, items, champion_items, cvc, userprofiles
 import crud
 
 app = FastAPI(title="Drporo")
 
-# Static and templates
+# Static files and templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
 @app.on_event("startup")
-def on_startup():
-    init_db()
-
+def startup_event():
+    """
+    Render a veces inicia la app antes de que PostgreSQL esté listo.
+    Si init_db() falla, lo ignoramos para no romper el deploy.
+    La app funciona igual porque PostgreSQL ya tiene las tablas creadas.
+    """
+    try:
+        init_db()
+        print("✔ Tablas creadas o verificadas correctamente.")
+    except OperationalError:
+        print("⚠ No se pudo conectar a la BD al iniciar. La app seguirá ejecutándose.")
 
 
 # Routers
@@ -26,25 +35,36 @@ app.include_router(champions.router)
 app.include_router(items.router)
 app.include_router(champion_items.router)
 app.include_router(cvc.router)
-
 app.include_router(userprofiles.router)
 
+
+# Root
 @app.get("/", response_class=HTMLResponse)
 def root(request: Request):
     return templates.TemplateResponse("root.html", {"request": request})
 
+
+# Search
 @app.get("/search")
 def search(request: Request, q: str = "", db: Session = Depends(get_db)):
-    champions = []
-    items = []
+    champions_result = []
+    items_result = []
+
     if q:
-        # Busca campeones que contengan la query en el nombre
-        champions = db.query(crud.models.Champion).filter(crud.models.Champion.nombre.ilike(f"%{q}%")).all()
-        # Busca items que contengan la query en el nombre
-        items = db.query(crud.models.Item).filter(crud.models.Item.nombre.ilike(f"%{q}%")).all()
+        champions_result = (
+            db.query(crud.models.Champion)
+            .filter(crud.models.Champion.nombre.ilike(f"%{q}%"))
+            .all()
+        )
+        items_result = (
+            db.query(crud.models.Item)
+            .filter(crud.models.Item.nombre.ilike(f"%{q}%"))
+            .all()
+        )
+
     return templates.TemplateResponse("main/search.html", {
         "request": request,
         "query": q,
-        "champions": champions,
-        "items": items
+        "champions": champions_result,
+        "items": items_result
     })
