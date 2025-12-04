@@ -19,7 +19,7 @@ def get_db():
         db.close()
 
 
-# LISTAR ITEMS DE UN CAMPEÓN
+# lista items champ ============================================================
 @router.get("/{champion_id}", response_class=HTMLResponse)
 def get_items_for_champion(request: Request, champion_id: int, db: Session = Depends(get_db)):
     champion = crud.get_champion(db, champion_id)
@@ -32,7 +32,7 @@ def get_items_for_champion(request: Request, champion_id: int, db: Session = Dep
     })
 
 
-# FORMULARIO AGREGAR ITEM
+# AGREGAR ITEM ============================================================
 @router.get("/{champion_id}/add", response_class=HTMLResponse)
 def add_item_form(request: Request, champion_id: int, db: Session = Depends(get_db)):
     champion = crud.get_champion(db, champion_id)
@@ -45,7 +45,7 @@ def add_item_form(request: Request, champion_id: int, db: Session = Depends(get_
     })
 
 
-# PROCESAR POST
+# PROCESAR POST ============================================================
 @router.post("/{champion_id}/add")
 def add_item_to_champion(
     request: Request,

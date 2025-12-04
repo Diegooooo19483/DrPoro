@@ -1,4 +1,4 @@
-#  DrPoro — FastAPI
+#  DrPoro 
 
 Sistema web para administrar **Campeones**, **Ítems** y estadísticas de League of Legends, construido con **FastAPI**, **SQLAlchemy**, **Jinja2** y soporte para PostgreSQL o SQLite.
 
@@ -22,6 +22,29 @@ Se maneja a través del modelo intermedio **ChampionItem**, que además almacena
 - `porcentaje_uso`: cuán popular es el ítem en ese campeón.
 
 ---
+### Casos de uso
+
+1️⃣ Consulta la lista de campeones
+
+El sistema muestra la lista completa obtenida desde la base de datos:
+Nombre
+Rol
+Winrate
+Pick rate
+Ban rate
+Items más usados
+
+El usuario selecciona un campeón para ver más información.
+2️⃣ Visualiza detalles del campeón
+
+El sistema muestra:
+Descripción / Historia
+Estadísticas
+Items utilizados (con porcentaje de uso)
+Matchups (vs otros campeones)
+Campeones que le hacen counter
+Campeones a los que él le hace counter
+Esta información ayuda al usuario a planear su estrategia en partidas clasificatorias.
 
 # 🧩 Modelos y Relaciones
 
@@ -75,18 +98,7 @@ Representa un ítem del juego.
 
 ---
 
-### 🟢 API JSON
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/champions/` | Listado JSON |
-| GET | `/champions/{id}` | Obtener campeón |
-| GET | `/champions/by-name/{name}` | Buscar por nombre |
-| POST | `/champions/` | Crear campeón |
-| PUT | `/champions/{id}` | Editar campeón |
-| DELETE | `/champions/{id}` | Desactivar campeón |
-
----
 
 ## 🧩 2. Items
 

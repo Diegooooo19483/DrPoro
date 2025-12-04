@@ -10,9 +10,7 @@ from fastapi.templating import Jinja2Templates
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/userprofiles", tags=["UserProfiles"])
 
-# -----------------------------
-# DB SESSION
-# -----------------------------
+
 def get_db():
     db = database.SessionLocal()
     try:
@@ -21,9 +19,7 @@ def get_db():
         db.close()
 
 
-# -----------------------------
-# FORMULARIO NUEVO PERFIL
-# -----------------------------
+
 @router.get("/new")
 def new_userprofile_form(request: Request, db: Session = Depends(get_db)):
     all_champions = db.query(models.Champion).all()
@@ -33,9 +29,7 @@ def new_userprofile_form(request: Request, db: Session = Depends(get_db)):
     )
 
 
-# -----------------------------
-# CREAR NUEVO PERFIL (POST)
-# -----------------------------
+
 @router.post("/new")
 def submit_new_userprofile(
     request: Request,
@@ -53,7 +47,6 @@ def submit_new_userprofile(
         with open(filename, "wb") as f:
             f.write(foto.file.read())
 
-    # Crear el perfil en la DB
     profile_data = schemas.UserProfileCreate(
         nombre_perfil=nombre_perfil,
         nombre_cuenta=nombre_cuenta,
@@ -63,7 +56,6 @@ def submit_new_userprofile(
 
     db_profile = crud.create_userprofile(db, profile_data)
 
-    # Agregar campeones favoritos si se seleccionaron
     if campeones_favoritos_ids:
         champions = db.query(models.Champion).filter(
             models.Champion.id.in_(campeones_favoritos_ids)
@@ -72,13 +64,9 @@ def submit_new_userprofile(
         db.commit()
         db.refresh(db_profile)
 
-    # Redirigir a la vista del perfil creado
     return RedirectResponse(url=f"/userprofiles/view/{db_profile.id}", status_code=302)
 
 
-# -----------------------------
-# VER PERFIL
-# -----------------------------
 @router.get("/view/{profile_id}")
 def view_userprofile(profile_id: int, request: Request, db: Session = Depends(get_db)):
     profile = db.query(models.UserProfile).filter(models.UserProfile.id == profile_id).first()

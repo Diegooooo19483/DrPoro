@@ -2,13 +2,11 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Construimos la URL de la base de datos desde las variables de Clever Cloud
 DATABASE_URL = os.getenv(
     "POSTGRESQL_ADDON_URI",
     "sqlite:///./drporo.db"
 )
 
-# Reemplazar el puerto si está definido explícitamente
 host = os.getenv("POSTGRESQL_ADDON_HOST")
 port = os.getenv("POSTGRESQL_ADDON_PORT")
 user = os.getenv("POSTGRESQL_ADDON_USER")

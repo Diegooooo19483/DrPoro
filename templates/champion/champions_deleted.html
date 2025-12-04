@@ -3,7 +3,6 @@
 {% block content %}
 <h2>🗑️ Campeones Eliminados</h2>
 
-<!-- VOLVER -->
 <div style="margin-bottom: 20px;">
     <a href="/champions/list">
         <button class="primary" style="padding:6px 12px;">← Volver</button>
@@ -29,10 +28,8 @@
 
         <td style="display:flex; gap:10px; align-items:center;">
 
-            <!-- Ver -->
             <a href="/champions/{{ champ.id }}/view" class="action-link">Ver</a>
 
-            <!-- Restaurar -->
             <form action="/champions/{{ champ.id }}/activate" method="post" style="display:inline;">
                 <button
                     style="

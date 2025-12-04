@@ -11,23 +11,16 @@ import crud
 
 app = FastAPI(title="Drporo")
 
-# Static files and templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
 @app.on_event("startup")
 def startup_event():
-    """
-    Render a veces inicia la app antes de que PostgreSQL esté listo.
-    Si init_db() falla, lo ignoramos para no romper el deploy.
-    La app funciona igual porque PostgreSQL ya tiene las tablas creadas.
-    """
     try:
         init_db()
-        print("✔ Tablas creadas o verificadas correctamente.")
     except OperationalError:
-        print("⚠ No se pudo conectar a la BD al iniciar. La app seguirá ejecutándose.")
+        pass
 
 
 # Routers

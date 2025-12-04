@@ -16,7 +16,6 @@
     </a>
 </div>
 
-<!-- FILTRO POR ROL -->
 <form method="get" style="margin-bottom: 20px; margin-top: 20px;">
     <label for="rol">Filtrar por rol:</label>
     <select name="rol" id="rol" onchange="this.form.submit()">
@@ -27,7 +26,6 @@
     </select>
 </form>
 
-<!-- TABLA -->
 <table>
     <tr>
         <th>ID</th>
@@ -50,7 +48,6 @@
             <a href="/champions/{{ champ.id }}/edit" class="action-link">Editar</a>
 
             {% if champ.activo %}
-            <!-- SOFT DELETE -->
             <form action="/champions/{{ champ.id }}/delete" method="post" style="display:inline;">
                 <button class="delete-text-btn">Eliminar</button>
             </form>

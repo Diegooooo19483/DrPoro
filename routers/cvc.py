@@ -29,7 +29,6 @@ def create_cvc(
     oponente_id: int = Form(...),
     winrate: float = Form(...)
 ):
-    # Llamar al CRUD que hace el cálculo automático
     crud.create_cvc(db, champion_id, oponente_id, winrate)
     return RedirectResponse(url="/cvc", status_code=303)
 

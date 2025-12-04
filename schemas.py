@@ -1,9 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import Optional, List
 
-# ============================================================
-# 🟦 PROFILE (información extendida del campeón)
-# ============================================================
+# Perfil campeón===========================================================
+
 
 class ProfileBase(BaseModel):
     descripcion: Optional[str] = ""
@@ -20,9 +19,8 @@ class Profile(ProfileBase):
         orm_mode = True
 
 
-# ============================================================
-# 🟩 ITEMS
-# ============================================================
+# Items ============================================================
+
 
 class ItemBase(BaseModel):
     nombre: str
@@ -45,9 +43,8 @@ class Item(ItemBase):
         orm_mode = True
 
 
-# ============================================================
-# 🟥 CHAMPIONS
-# ============================================================
+# Champions ============================================================
+
 
 class ChampionBase(BaseModel):
     nombre: str
@@ -72,12 +69,11 @@ class Champion(ChampionBase):
     id: int
 
     class Config:
-        from_attributes = True  # usar ORM directamente
+        from_attributes = True
 
 
-# ============================================================
-# 🟧 Champion vs Champion (CVC)
-# ============================================================
+# matchaps Champion vs Champion ============================================================
+
 
 class CVCBase(BaseModel):
     champion_id: int
@@ -94,9 +90,8 @@ class CVC(CVCBase):
         orm_mode = True
 
 
-# ============================================================
-# 🟨 ChampionItem (relación campeón ↔ items)
-# ============================================================
+# champion item============================================================
+
 
 class ChampionItemBase(BaseModel):
     champion_id: int
@@ -113,9 +108,8 @@ class ChampionItem(ChampionItemBase):
         orm_mode = True
 
 
-# ============================================================
-# 🟦 USER PROFILE
-# ============================================================
+# profile ============================================================
+
 
 class UserProfileBase(BaseModel):
     nombre_perfil: str

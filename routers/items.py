@@ -20,9 +20,7 @@ def get_db():
         db.close()
 
 
-# -----------------------------------------------
-# 🔹 HTML – Listar Items
-# -----------------------------------------------
+# VER
 @router.get("/", response_class=HTMLResponse)
 def list_items_page(request: Request, db: Session = Depends(get_db)):
     items = crud.list_items(db)
@@ -32,9 +30,7 @@ def list_items_page(request: Request, db: Session = Depends(get_db)):
     )
 
 
-# -----------------------------------------------
-# 🔹 HTML – Ver un Item
-# -----------------------------------------------
+# VER
 @router.get("/{item_id}/view", response_class=HTMLResponse)
 def view_item_page(item_id: int, request: Request, db: Session = Depends(get_db)):
     item = crud.get_item(db, item_id)
@@ -47,9 +43,7 @@ def view_item_page(item_id: int, request: Request, db: Session = Depends(get_db)
     )
 
 
-# -----------------------------------------------
-# TEMPLATE: FORM PARA CREAR
-# -----------------------------------------------
+# CREAr
 @router.get("/new", response_class=HTMLResponse)
 def new_champion_form(request: Request):
     return templates.TemplateResponse("items/item_create.html", {
@@ -57,9 +51,7 @@ def new_champion_form(request: Request):
     })
 
 
-# -----------------------------------------------
-# FORM POST CREAR DESDE HTML
-# -----------------------------------------------
+# FORM CREAR
 @router.post("/new", response_class=HTMLResponse)
 def create_item_from_form(
     request: Request,
@@ -79,9 +71,7 @@ def create_item_from_form(
     return RedirectResponse(url="/items/", status_code=302)
 
 
-# ------------------------------
-# HTML – Editar Item
-# ------------------------------
+# EDITAR
 @router.get("/{item_id}/edit", response_class=HTMLResponse)
 def edit_item_form(item_id: int, request: Request, db: Session = Depends(get_db)):
     item = crud.get_item(db, item_id)
@@ -103,14 +93,10 @@ def update_item_from_form(item_id: int,
     return RedirectResponse(url=f"/items/{item_id}/view", status_code=302)
 
 
-# ------------------------------
-# HTML – Borrar Item
-# ------------------------------
+# DELETE
 @router.post("/{item_id}/delete")
 def delete_item_from_form(item_id: int, db: Session = Depends(get_db)):
     db_item = crud.soft_delete_item(db, item_id)
-    # Si no existe, redirige a la lista de items
     if not db_item:
         return RedirectResponse("/items", status_code=302)
-    # Redirige a la lista de items después de borrar
     return RedirectResponse("/items", status_code=302)

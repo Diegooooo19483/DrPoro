@@ -5,9 +5,9 @@ import models, schemas
 from models import Champion
 
 
-# ============================================================
+
 # CHAMPIONS CRUD
-# ============================================================
+
 
 def get_champion(db: Session, champion_id: int):
     return db.query(models.Champion).filter(models.Champion.id == champion_id).first()
@@ -60,9 +60,9 @@ def soft_delete_champion(db: Session, champion_id: int):
     return db_champ
 
 
-# ============================================================
+
 # ITEMS CRUD
-# ============================================================
+
 
 def create_item(db: Session, item: schemas.ItemCreate):
     db_item = models.Item(
@@ -114,9 +114,9 @@ def soft_delete_item(db: Session, item_id: int):
     return db_item
 
 
-# ============================================================
+
 # CHAMPION-ITEM RELATION
-# ============================================================
+
 
 def add_item_to_champion(db: Session, champion_id: int, item_id: int, porcentaje_uso: float = 0.0):
     exists = db.query(models.ChampionItem).filter(
@@ -152,9 +152,9 @@ def get_items_for_champion(db: Session, champion_id: int):
     )
 
 
-# ============================================================
+
 # CVC (Champion vs Champion)
-# ============================================================
+
 
 def list_cvc(db: Session):
     return db.query(models.ChampionVsChampion).all()
@@ -214,9 +214,9 @@ def list_champions_by_winrate(db: Session, rol: str | None = None):
     return q.order_by(models.Champion.tasa_victoria.desc()).all()
 
 
-# ============================================================
+
 # USERPROFILE CRUD
-# ============================================================
+
 
 def create_userprofile(db: Session, profile: schemas.UserProfileCreate):
     db_profile = models.UserProfile(
