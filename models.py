@@ -6,17 +6,14 @@ from database import Base
 # 🟨 TABLAS INTERMEDIAS (associative tables)
 # ============================================================
 
-# 🔗 Asociación Champion ↔ Item (muchos a muchos)
 class ChampionItem(Base):
     __tablename__ = "champion_items"
 
     id = Column(Integer, primary_key=True, index=True)
     champion_id = Column(Integer, ForeignKey("champions.id"), nullable=False)
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
-    porcentaje_uso = Column(Float, default=0.0)  # % de uso de ese item en ese campeón
+    porcentaje_uso = Column(Float, default=0.0)
 
-
-# 🔗 Asociación UserProfile ↔ Champion (muchos a muchos)
 userprofile_favorite_champions = Table(
     "userprofile_favorite_champions",
     Base.metadata,
@@ -41,16 +38,12 @@ class Champion(Base):
 
     activo = Column(Boolean, default=True)
 
-    # ---------------- RELACIONES ----------------
-
-    # 🔗 Relación con UserProfile (campeones favoritos)
     usuarios_favoritos = relationship(
         "UserProfile",
         secondary=userprofile_favorite_champions,
         back_populates="campeones_favoritos"
     )
 
-    # 🔗 Relación uno-a-uno con Profile (detalles del campeón)
     profile = relationship(
         "Profile",
         back_populates="champion",
@@ -58,7 +51,6 @@ class Champion(Base):
         cascade="all, delete-orphan"
     )
 
-    # 🔗 Relación con enfrentamientos (ChampionVsChampion)
     enfrentamientos = relationship(
         "ChampionVsChampion",
         back_populates="champion",
@@ -66,14 +58,12 @@ class Champion(Base):
         foreign_keys="ChampionVsChampion.champion_id"
     )
 
-    # 🔗 Relación muchos-a-muchos con Item
     items = relationship(
         "Item",
         secondary="champion_items",
         back_populates="champions"
     )
 
-    # 🔗 Relación directa con ChampionItem (tabla intermedia)
     champion_items = relationship(
         "ChampionItem",
         backref="champion",
@@ -107,7 +97,6 @@ class Item(Base):
     porcentaje_uso = Column(Float, default=0.0)
     activo = Column(Boolean, default=True)
 
-    # Relación muchos-a-muchos con Champion
     champions = relationship(
         "Champion",
         secondary="champion_items",
@@ -128,7 +117,6 @@ class ChampionVsChampion(Base):
 
     winrate = Column(Float, default=50.0)
 
-    # relaciones
     champion = relationship(
         "Champion",
         foreign_keys=[champion_id],
@@ -139,7 +127,6 @@ class ChampionVsChampion(Base):
         foreign_keys=[oponente_id]
     )
 
-    # Un campeón no puede tener 2 registros repetidos contra el mismo oponente
     __table_args__ = (
         UniqueConstraint('champion_id', 'oponente_id', name='_champ_opon_uc'),
     )
@@ -158,14 +145,12 @@ class UserProfile(Base):
     region = Column(String, nullable=True)
     foto = Column(String, nullable=True)
 
-    # Campeones favoritos (muchos a muchos)
     campeones_favoritos = relationship(
         "Champion",
         secondary=userprofile_favorite_champions,
         back_populates="usuarios_favoritos"
     )
 
-    # Propiedad útil para extraer solo IDs
     @property
     def campeones_favoritos_ids(self):
         return [c.id for c in self.campeones_favoritos]
